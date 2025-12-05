@@ -651,6 +651,14 @@
       "placeholder": "raycast-focus"
     },
     {
+      "name": "useSmartDate",
+      "type": "checkbox",
+      "required": false,
+      "label": "Use natural language to add a date",
+      "description": "When enabled you can use tomorrow, next Friday, Monday at 3pm, in 2 weeks in the title",
+      "default": true
+    },
+    {
       "name": "useConfetti",
       "type": "checkbox",
       "label": "Use confetti to celebrate task completion",

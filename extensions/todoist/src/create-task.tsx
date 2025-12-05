@@ -64,6 +64,8 @@ function CreateTask({ fromProjectId, fromLabel, fromTodayEmptyView, draftValues 
 
   const lowestPriority = priorities[priorities.length - 1];
 
+  const { useSmartDate } = getPreferenceValues<Preferences>();
+
   const { handleSubmit, itemProps, values, focus, reset, setValue } = useForm<CreateTaskValues>({
     async onSubmit(values) {
       if (shouldCloseMainWindow) {
@@ -419,6 +421,10 @@ function CreateTask({ fromProjectId, fromLabel, fromTodayEmptyView, draftValues 
   };
 
   const updateTitleWithDate = (newDate: Date | null) => {
+    if (!useSmartDate) {
+      return;
+    }
+
     let updatedContent = values.content;
 
     // Remove the LAST date occurrence if we know what it is from the parser
@@ -589,6 +595,7 @@ function CreateTask({ fromProjectId, fromLabel, fromTodayEmptyView, draftValues 
 
     // Detect manual date change
     if (values.date?.getTime() !== prev.date?.getTime()) {
+
       lastActionRef.current.date = { source: "manual", timestamp: now };
       // Update title to reflect manual date change
       if (now - lastActionRef.current.contentChanged > 100) {
@@ -682,11 +689,15 @@ function CreateTask({ fromProjectId, fromLabel, fromTodayEmptyView, draftValues 
           newDate.setSeconds(values.date.getSeconds());
         }
 
-        setValue("date", newDate);
+        if (useSmartDate) {
+          setValue("date", newDate);
+        }
         lastActionRef.current.date = { source: "nlp", timestamp: nlpTimestamp };
       } else {
         // Reset to null/empty when date parameter is removed from title
-        setValue("date", fromTodayEmptyView ? new Date() : null);
+        if (useSmartDate) {
+          setValue("date", fromTodayEmptyView ? new Date() : null);
+        }
         lastActionRef.current.date = { source: "nlp", timestamp: nlpTimestamp };
       }
     }
